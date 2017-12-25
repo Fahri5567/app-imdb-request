@@ -41,26 +41,35 @@ function normalizePort(val) {
 * Create HTTP server.
 */
 
-if (cluster.isMaster) {
-    console.log(`Master ${process.pid} is running`);
-    
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
-    }
-    
-    cluster.on('exit', (worker, code, signal) => {
-        console.log(`worker ${worker.process.pid} died`);
-    });
-}
-else {
-    // Workers can share any TCP connection
-    // In this case it is an HTTP server
-    // http.createServer(app);
+function createHttp() {
     http.createServer(app).listen(app.get('port'), function(){
         debug("Express server listening on port " + app.get('port'));
-        console.log('Worker ' + cluster.worker.id + ' running!');
+        if (process.env.cluster && process.env.cluster === true) {
+            console.log('Worker ' + cluster.worker.id + ' running!');
+        }
+        console.log(`Worker ${process.pid} started`);
     });
-    
-    console.log(`Worker ${process.pid} started`);
+}
+
+if (process.env.cluster && process.env.cluster === true) {
+    if (cluster.isMaster) {
+        console.log(`Master ${process.pid} is running`);
+        
+        // Fork workers.
+        for (let i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
+        
+        cluster.on('exit', (worker, code, signal) => {
+            console.log(`worker ${worker.process.pid} died`);
+        });
+    }
+    else {
+        // Workers can share any TCP connection
+        // In this case it is an HTTP server
+        createHttp();
+    }
+}
+else {
+    createHttp();
 }
