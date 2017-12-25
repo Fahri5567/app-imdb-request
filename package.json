@@ -1,0 +1,31 @@
+{
+  "name": "app-imdb-request",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fahri5567/app-imdb-request.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fahri5567/app-imdb-request/issues"
+  },
+  "homepage": "https://github.com/Fahri5567/app-imdb-request#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
+    "mysql2": "^1.5.1",
+    "pug": "^2.0.0-rc.4",
+    "request": "^2.83.0",
+    "sequelize": "^4.28.5",
+    "serve-favicon": "^2.4.5",
+    "sqlite3": "^3.1.13",
+    "stack-trace": "0.0.10"
+  }
+}
