@@ -44,14 +44,14 @@ function normalizePort(val) {
 function createHttp() {
     http.createServer(app).listen(app.get('port'), function(){
         debug("Express server listening on port " + app.get('port'));
-        if (process.env.cluster && process.env.cluster === true) {
+        if (process.env.cluster && process.env.cluster.toLowerCase() === 'true') {
             console.log('Worker ' + cluster.worker.id + ' running!');
         }
         console.log(`Worker ${process.pid} started`);
     });
 }
 
-if (process.env.cluster && process.env.cluster === true) {
+if (process.env.cluster && process.env.cluster.toLowerCase() === 'true') {
     if (cluster.isMaster) {
         console.log(`Master ${process.pid} is running`);
         

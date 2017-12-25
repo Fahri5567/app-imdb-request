@@ -103,33 +103,43 @@ class requestBase {
             this.requestUri = uri + this.requestPath + (this.param.length ? '?' + this.param : '');
         }
         
-        const onlyContains = ['q', 'tconst', 'nconst'],
-            param = utils.toParam(this.requestParam, onlyContains),
-            fileName = this.requestPath + (param.length ? '?' + param : ''),
-            file = path.resolve(this.temp.dir, utils.checksum(fileName));
-        
-        fs.stat(file, (error, stat) => {
-            if (error) {
-                if (error.code === 'ENOENT') {
-                    return this.request((error, response) => {
-                        if (error) {
-                            return callback(error);
-                        }
-                        
-                        const body = response.body,
-                            data = body.data;
-                        
-                        if (typeof data == 'object' && response.statusCode === 200 && this.temp.dir) {
-                            return this.saveRequest(file, data, callback);
-                        }
-                        
-                        return callback(null, body);
-                    });
+        if (process.env.saveRequest && process.env.saveRequest.toLowerCase() === 'true') {
+            const onlyContains = ['q', 'tconst', 'nconst'],
+                param = utils.toParam(this.requestParam, onlyContains),
+                fileName = this.requestPath + (param.length ? '?' + param : ''),
+                file = path.resolve(this.temp.dir, utils.checksum(fileName));
+            
+            fs.stat(file, (error, stat) => {
+                if (error) {
+                    if (error.code === 'ENOENT') {
+                        return this.request((error, response) => {
+                            if (error) {
+                                return callback(error);
+                            }
+                            
+                            const body = response.body,
+                                data = body.data;
+                            
+                            if (typeof data == 'object' && response.statusCode === 200 && this.temp.dir) {
+                                return this.saveRequest(file, data, callback);
+                            }
+                            
+                            return callback(null, body);
+                        });
+                    }
+                    return callback(error);
                 }
-                return callback(error);
-            }
-            this.saveRequest(file, null, callback);
-        });
+                this.saveRequest(file, null, callback);
+            });
+        }
+        else {
+            this.request((error, response) => {
+                if (error) {
+                    return callback(error);
+                }
+                callback(null, response.body);
+            });
+        }
     }
 }
 
